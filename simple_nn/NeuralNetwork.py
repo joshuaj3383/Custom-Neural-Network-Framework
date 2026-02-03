@@ -48,6 +48,8 @@ class NeuralNetwork:
         if isinstance(X, list):
             X = np.array(X).reshape(1, -1)
 
+        X = np.atleast_2d(X)
+
         X = self.normalize_input(X)
         outputs = [X]
 
@@ -108,7 +110,7 @@ class NeuralNetwork:
             for x, y in zip(X, Y):
                 #print(x,y)
                 self.backprop(x, y, lr)
-                loss = self.loss_func(self.forward(x)[-1], y)
+                loss = self.loss_func(self.predict(x), y)
                 #print(self.forward(x)[-1],y,loss)
                 net_loss += loss
 

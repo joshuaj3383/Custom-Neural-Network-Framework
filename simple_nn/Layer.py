@@ -55,6 +55,10 @@ class Layer:
         if isinstance(inputs, list):
             inputs = np.array(inputs).reshape(1, -1)
 
+        #hmm this fixes something but not sure what
+        inputs = np.atleast_2d(inputs)
+
+        #print(inputs.shape, self.weights.shape, self.biases.shape)
         z = inputs @ self.weights + self.biases
         return self.activationFunction.calcActivationFunction(z)
 
