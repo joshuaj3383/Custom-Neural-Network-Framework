@@ -56,18 +56,7 @@ class Layer:
             inputs = np.array(inputs).reshape(1, -1)
 
         z = inputs @ self.weights + self.biases
-        return self.apply_activation(z)
-
-    def apply_activation(self, z: np.ndarray) -> np.ndarray:
-        if self.activationFunction == ActivationFunction.RELU:
-            return np.maximum(0, z)
-        elif self.activationFunction == ActivationFunction.LEAKY_RELU:
-            return np.maximum(0.01 * z, z)
-        elif self.activationFunction == ActivationFunction.SIGMOID:
-            return 1 / (1 + np.exp(-z))
-        elif self.activationFunction == ActivationFunction.TANH:
-            return np.tanh(z)
-        return z  # ActivationFunction.NONE
+        return self.activationFunction.calcActivationFunction(z)
 
     def changeWeights(self, delta_weight: np.ndarray) -> None:
         if delta_weight.shape != self.weights.shape:

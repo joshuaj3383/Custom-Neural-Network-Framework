@@ -60,16 +60,28 @@ class NeuralNetwork:
 
     def backprop(self, X: np.ndarray, Y: np.ndarray, lr: float):
         """Perform one backpropagation step"""
+
+        # Make sure that the data is at least 2d for dimsions sake
+        X = np.atleast_2d(X)
+        Y = np.atleast_2d(Y)
+
+        # Setup
         activations = self.forward(X)
         error = [None] * len(self.layers)
 
         # Output layer error
         output = activations[-1]
 
-        #We force softmax to be paired with CEL for practicality and also math
+        # Make sure shapes line up bc of brocasting
+        # eg. (1,3) - (1,1) will fly by (thx iris)
+        if output.shape != Y.shape:
+            raise ValueError(f"Network output shape: {output.shape} != data shape: {Y.shape}")
+
+        # We force softmax to be paired with CEL for practicality and also math
         if self.layers[-1].activationFunction == ActivationFunction.SOFTMAX:
             error[-1] = output - Y
         else:
+            #print(f"sizes: ({output.shape}-{Y.shape}) * {self.layers[-1].activationFunction.calcDerivative(output).shape}")
             error[-1] = (output - Y) * self.layers[-1].activationFunction.calcDerivative(output)
         # Backpropagate through hidden layers
         for i in reversed(range(len(self.layers) - 1)):
@@ -94,11 +106,10 @@ class NeuralNetwork:
         for epoch in range(epochs):
             net_loss = 0
             for x, y in zip(X, Y):
-                x = np.atleast_1d(x)
-                y = np.atleast_1d(y)
-
+                #print(x,y)
                 self.backprop(x, y, lr)
                 loss = self.loss_func(self.forward(x)[-1], y)
+                #print(self.forward(x)[-1],y,loss)
                 net_loss += loss
 
             avg_loss = net_loss / len(X)
@@ -111,8 +122,8 @@ class NeuralNetwork:
 
         for x, y in zip(X, Y):
             # Force dimensions for 1d
-            x = np.atleast_1d(x)
-            y = np.atleast_1d(y)
+            x = np.atleast_2d(x)
+            y = np.atleast_2d(y)
 
             pred = self.predict(x)
             predictions.append(pred)
@@ -132,8 +143,8 @@ class NeuralNetwork:
     @staticmethod
     def cel(Y_pred: np.ndarray, Y_true: np.ndarray) -> float:
         """Cross entropy loss"""
-        # Log of predicted probabilities, avoid log(0) with a small epsilon
-        epsilon = 1e-7
+        epsilon = 1e-5
+        #print(Y_pred)
         return float(-1 * np.sum(Y_true * np.log(Y_pred + epsilon)))  # Cross-entropy
 
     @staticmethod
