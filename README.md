@@ -49,6 +49,7 @@ For this reason, I rewrote all the code to be neater, more efficient (using nump
 ## AI Useage
 - AI is a tool to speed up learning, not replace it.
 - All design concepts and 90% of the code is written by me. AI useage mostly comes in with debugging specific, contained issues (it is unable to even describe weight matrix sizes) as well as some specific matplotlib tools and commenting.
+- Grammar and markdown checked with AI
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
