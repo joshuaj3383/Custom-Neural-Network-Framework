@@ -19,7 +19,7 @@ class Layer:
 
         # If shorthand: [num_inputs, num_neurons]
         if isinstance(weights, list) and len(weights) == 2 and all(isinstance(x, int) for x in weights):
-            num_inputs, num_neurons = weights
+            num_inputs, num_neurons= weights
             weights = self.activationFunction.initWeights(num_inputs, num_neurons)
 
         # Convert to NumPy arrays

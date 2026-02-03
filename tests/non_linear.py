@@ -21,7 +21,7 @@ nn = NeuralNetwork(layers)
 print("=====================================")
 print("Generating 1000 samples for x in -7,5 with .25x^3+1.5x^2-3 with noist_std=2")
 print("These numbers were chosen to provide an interesting graph with 3 roots and 2 minima/maxima")
-X, Y = nn.generate_data(5000, (-7,5), lambda x:.25*x*x*x+1.5*x*x-3, 2)
+X, Y = nn.generate_data(5000, (-7,5), lambda x:.25*x*x*x+1.5*x*x-3, 2.5)
 print("\nTraining=============================")
 nn.train(X, Y, 7, .0003, .9)
 
@@ -29,7 +29,7 @@ nn.train(X, Y, 7, .0003, .9)
 x = -7
 in_nn = []
 out_nn = []
-while x < 5:
+while x <= 5:
     in_nn.append(round(x,3))
     out_nn.append(round(nn.predict([x]).tolist()[0][0],3))
     x += 0.05
@@ -37,12 +37,12 @@ while x < 5:
 #Plot
 print("\nPlotting===================================")
 plt.figure()
-plt.scatter(X,Y,color="red",s=3)
+plt.scatter(X,Y,color="red",s=.5)
 plt.title("Data")
-plt.show()
-plt.figure()
 plt.scatter(in_nn,out_nn,color="blue",s=10)
-plt.title("Predictions")
+plt.title("Data vs Predictions")
+plt.xlabel("Input")
+plt.ylabel("Output")
 plt.show()
 print("Done")
 

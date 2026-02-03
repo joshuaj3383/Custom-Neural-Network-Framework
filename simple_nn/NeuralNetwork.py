@@ -2,6 +2,7 @@ from typing import List, Callable
 import numpy as np
 import ast
 from simple_nn.Layer import Layer
+from simple_nn.ActivationFunction import ActivationFunction
 
 
 class NeuralNetwork:
@@ -24,6 +25,8 @@ class NeuralNetwork:
 
         self.layers: List[Layer] = layers
         self.normalize_inputs = normalize_inputs
+        #We force softmax to be paired with CEL for practicality and also math
+        self.loss_func = self.cel if layers[-1].activationFunction == ActivationFunction.SOFTMAX else self.mse
         self._check_dimensions()
 
     def _check_dimensions(self):
@@ -62,7 +65,12 @@ class NeuralNetwork:
 
         # Output layer error
         output = activations[-1]
-        error[-1] = (output - Y) * self.layers[-1].activationFunction.calcDerivative(output)
+
+        #We force softmax to be paired with CEL for practicality and also math
+        if self.layers[-1].activationFunction == ActivationFunction.SOFTMAX:
+            error[-1] = output - Y
+        else:
+            error[-1] = (output - Y) * self.layers[-1].activationFunction.calcDerivative(output)
         # Backpropagate through hidden layers
         for i in reversed(range(len(self.layers) - 1)):
             W_next = self.layers[i + 1].weights
@@ -90,7 +98,7 @@ class NeuralNetwork:
                 y = np.atleast_1d(y)
 
                 self.backprop(x, y, lr)
-                loss = self.cost(self.forward(x)[-1], y)
+                loss = self.loss_func(self.forward(x)[-1], y)
                 net_loss += loss
 
             avg_loss = net_loss / len(X)
@@ -102,12 +110,13 @@ class NeuralNetwork:
         losses = []
 
         for x, y in zip(X, Y):
+            # Force dimensions for 1d
             x = np.atleast_1d(x)
             y = np.atleast_1d(y)
 
             pred = self.predict(x)
             predictions.append(pred)
-            losses.append(self.cost(pred, y))
+            losses.append(self.loss_func(pred, y))
 
         return predictions, losses
 
@@ -116,9 +125,16 @@ class NeuralNetwork:
         return self.forward(X)[-1]
 
     @staticmethod
-    def cost(Y_pred: np.ndarray, Y_true: np.ndarray) -> float:
+    def mse(Y_pred: np.ndarray, Y_true: np.ndarray) -> float:
         """Mean squared error"""
         return float(np.mean((Y_pred - Y_true) ** 2))
+
+    @staticmethod
+    def cel(Y_pred: np.ndarray, Y_true: np.ndarray) -> float:
+        """Cross entropy loss"""
+        # Log of predicted probabilities, avoid log(0) with a small epsilon
+        epsilon = 1e-7
+        return float(-1 * np.sum(Y_true * np.log(Y_pred + epsilon)))  # Cross-entropy
 
     @staticmethod
     def generate_data(num_samples: int, x_range: tuple, func: Callable[[float], float], noise_std: float = 0):

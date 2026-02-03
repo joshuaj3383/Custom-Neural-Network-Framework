@@ -7,6 +7,7 @@ class ActivationFunction(Enum):
     LEAKY_RELU = 2
     SIGMOID = 3
     TANH = 4
+    SOFTMAX = 5
 
     def calcActivationFunction(self, x: np.ndarray) -> np.ndarray:
         if self == ActivationFunction.NONE:
@@ -19,7 +20,10 @@ class ActivationFunction(Enum):
             return 1 / (1 + np.exp(-x))
         elif self == ActivationFunction.TANH:
             return np.tanh(x)
-        return x
+        elif self == ActivationFunction.SOFTMAX:
+            return np.exp(x) / np.sum(np.exp(x))
+        else:
+            raise ValueError("Unknown activation function")
 
     def calcDerivative(self, x: np.ndarray) -> np.ndarray:
         if self == ActivationFunction.NONE:
@@ -32,11 +36,14 @@ class ActivationFunction(Enum):
             return x * (1 - x)
         elif self == ActivationFunction.TANH:
             return 1 - np.square(x)
-        return x
+        elif self == ActivationFunction.SOFTMAX:
+            raise ValueError("Softmax derivative should not be called as it is implemented in bpp with CEL")
+        else:
+            raise ValueError("Unknown activation function")
 
     def initWeights(self, numInputs: int, numNeurons: int) -> np.ndarray:
         scale = 0.01
-        if self in {ActivationFunction.SIGMOID, ActivationFunction.TANH}:
+        if self in {ActivationFunction.SIGMOID, ActivationFunction.TANH, ActivationFunction.SOFTMAX}:
             scale = (2 / (numInputs + numNeurons)) ** 0.5
         if self in {ActivationFunction.RELU, ActivationFunction.LEAKY_RELU}:
             scale = (2 / numInputs) ** 0.5
