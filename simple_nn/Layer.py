@@ -46,12 +46,14 @@ class Layer:
     def numInputs(self) -> int:
         return self.weights.shape[0]
 
-    def forward(self, inputs: np.ndarray) -> np.ndarray:
+    def forward(self, inputs: np.ndarray | list) -> np.ndarray:
         """
         Vectorized forward pass.
         inputs: shape (num_inputs,) or (batch_size, num_inputs)
         returns: shape (num_neurons,) or (batch_size, num_neurons)
         """
+        if isinstance(inputs, list):
+            inputs = np.array(inputs).reshape(1, -1)
 
         z = inputs @ self.weights + self.biases
         return self.apply_activation(z)
