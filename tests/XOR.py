@@ -32,8 +32,8 @@ def test_nn(nn: NeuralNetwork):
         print(f"Input: {x}, Output: {pred}, Expected: {y[0]}, Passed: {round(pred) == y[0]}")
 
 
-layer0 = Layer([2,5],.5,ActivationFunction.RELU)
-layer2 = Layer([5,1],1.5,ActivationFunction.NONE)
+layer0 = Layer([2,2],.5,ActivationFunction.RELU)
+layer2 = Layer([2,1],1.5,ActivationFunction.NONE)
 
 
 layers = [layer0, layer2]
@@ -42,10 +42,15 @@ nn = NeuralNetwork(layers)
 
 X, Y = create_xor_data()
 
-nn.train(X,Y,20,0.01)
+nn.train(X,Y,5,0.1)
 
 test_nn(nn)
 
+print(nn)
+
+
+print("repr---------------------------------")
+print(nn.__repr__())
 
 
 

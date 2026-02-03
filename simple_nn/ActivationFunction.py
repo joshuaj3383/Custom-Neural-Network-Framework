@@ -3,11 +3,10 @@ import numpy as np
 
 class ActivationFunction(Enum):
     NONE = 0
-    RELU = 2
-    LEAKY_RELU = 4
-    SIGMOID = 1
-    TANH = 3
-    SOFTMAX = 5  # Added Softmax
+    RELU = 1
+    LEAKY_RELU = 2
+    SIGMOID = 3
+    TANH = 4
 
     def calcActivationFunction(self, x: np.ndarray) -> np.ndarray:
         if self == ActivationFunction.NONE:
@@ -20,10 +19,6 @@ class ActivationFunction(Enum):
             return 1 / (1 + np.exp(-x))
         elif self == ActivationFunction.TANH:
             return np.tanh(x)
-        elif self == ActivationFunction.SOFTMAX:
-            # Softmax: convert logits to probabilities
-            exp_values = np.exp(x - np.max(x, axis=-1, keepdims=True))  # Numerical stability
-            return exp_values / np.sum(exp_values, axis=-1, keepdims=True)  # Normalize
         return x
 
     def calcDerivative(self, x: np.ndarray) -> np.ndarray:
@@ -37,10 +32,6 @@ class ActivationFunction(Enum):
             return x * (1 - x)
         elif self == ActivationFunction.TANH:
             return 1 - np.square(x)
-        elif self == ActivationFunction.SOFTMAX:
-            # Softmax doesn't have a simple derivative, handle it in loss function
-            # Cross-entropy with softmax is commonly used, which combines them
-            raise NotImplementedError("Softmax derivative is handled in the loss function")
         return x
 
     def initWeights(self, numInputs: int, numNeurons: int) -> np.ndarray:

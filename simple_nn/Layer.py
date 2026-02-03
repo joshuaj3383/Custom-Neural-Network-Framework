@@ -7,9 +7,11 @@ class Layer:
         self,
         weights: List[List[float] | List[int] | np.ndarray],
         biases: List[float] | float | np.ndarray,
-        activationFunction: ActivationFunction = ActivationFunction.NONE,
+        activationFunction: ActivationFunction | int= ActivationFunction.NONE,
     ):
-        if not isinstance(activationFunction, ActivationFunction):
+        if isinstance(activationFunction, int):
+            activationFunction = ActivationFunction(activationFunction)
+        elif not isinstance(activationFunction, ActivationFunction):
             raise TypeError(
                 f"activationFunction must be of type ActivationFunction but is {type(activationFunction)}"
             )
@@ -77,7 +79,7 @@ class Layer:
         self.biases += delta_bias
 
     def __str__(self):
-        return f"Weights: {self.weights}, Biases: {self.biases}, Activation: {self.activationFunction}"
+        return f"Weights:\n{self.weights}\nBiases:\n{self.biases}\nActivation:\n{self.activationFunction}\n"
 
     def __repr__(self):
-        return f"{self.weights}, {self.biases}, {self.activationFunction}"
+        return f"[{self.weights.tolist()}, {self.biases.tolist()}, {self.activationFunction.value}]"

@@ -1,12 +1,27 @@
 from typing import List, Callable
 import numpy as np
+import ast
 from simple_nn.Layer import Layer
 
 
 class NeuralNetwork:
-    def __init__(self, layers: List[Layer], normalize_inputs: bool = False):
+    def __init__(self, layers: List[Layer] | str, normalize_inputs: bool = False):
         if not layers:
             raise ValueError("NeuralNetwork must have at least one layer.")
+
+        if isinstance(layers, str):
+            list_repr = ast.literal_eval(layers)
+            layers = []
+            for layer in list_repr:
+                if len(layer) != 3:
+                    raise ValueError(f"Expected 3 layers, got {len(layer)} in layer {layer}")
+                layers.append(Layer(layer[0], layer[1], layer[2]))
+
+        else:
+            for layer in layers:
+                if not isinstance(layer, Layer):
+                    raise ValueError(f"Expected a Layer object, got {type(layer)}")
+
         self.layers: List[Layer] = layers
         self.normalize_inputs = normalize_inputs
         self._check_dimensions()
@@ -112,3 +127,18 @@ class NeuralNetwork:
         if noise_std > 0:
             Y += np.random.normal(0, noise_std, size=Y.shape)
         return X, Y
+
+    def __str__(self) -> str:
+        string = ""
+        for i, layer in enumerate(self.layers):
+            string += f"\nLayer {i}---------------\n"
+            string += layer.__str__()
+
+        return string
+
+    def __repr__(self) -> str:
+        string = "["
+        for layer in self.layers:
+            string += layer.__repr__() + ", "
+        string += "]"
+        return string
