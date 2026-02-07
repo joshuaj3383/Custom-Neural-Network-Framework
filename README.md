@@ -41,10 +41,31 @@ For this reason, I rewrote all the code to be neater, more efficient (using nump
 ## A Brief Explanation of Each Test (All Passed)
 - **linear.py**: Ensures that a perceptron can correctly perform linear regression.
 - **XOR.py**: Tests if the network can solve the classic XOR problem using two layers of neurons.
-- **non_linear.py**: Verifies that a more complicated network (3 layers) can match a cubic function with 3 roots and 2 extrema.
+- **non_linear.py**: Verifies that a more complicated network (3 layers) can match the function 0.25x³ − 1.5x² − 3 with 3 roots and 2 extrema.
 - **logarithmic.py**: A non-linear test with poor horizontal scaling.
 - **circular_bound.py**: Tests the network’s ability to recognize curves and more complicated bounding.
 - **iris.py**: Tests against the classic Iris dataset, showing the network’s ability to handle multiple inputs and outputs, as well as Softmax and Cross-Entropy Loss working as expected.
+
+## Example Results
+
+### Circular Boundary Test
+Demonstrates the network learning a non-linear decision boundary.  
+Average Accuracy: 98.2359, SD: 0.68  (10 tests)
+
+![Circular Boundary Approximation](tests/images/circular_bound.png)
+
+---
+
+### Non-Linear Function Approximation
+Comparison between an untrained network and a trained network fitting the function  
+0.25x³ − 1.5x² − 3.
+
+#### Before Training
+![Non Linear Pre Training](tests/images/non_linear_pretest.png)
+
+#### After Training
+![Non Linear Post Training](tests/images/non_linear_posttest.png)
+
 
 ## AI Useage
 - AI is a tool to speed up learning, not replace it.
